@@ -2,7 +2,7 @@
 <html ng-app="mainApp">
 <head>
     <meta charset="utf-8"> 
-	<title> With me in 2020</title>
+	<title> SSH command Web Replayer</title>
 	
 	<!-- 컴포넌트 스타일시트 -->
 	<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css">
@@ -15,27 +15,31 @@
 
 </head>
 
-<body class="body-withme" >
+<body class="body-swr" >
 
-<nav class="navbar navbar-default  navbar-fixed-top" role="navigation" ng-controller="navbarCtrl" >
-  <div class="container navbar-default">
-	
-	<a class="navbar-brand" href="/#/main"><i class="fa fa-heartbeat"></i> <b>WM 청개구리 유치원</b></a>
-	<button type="button" class="btn btn-warning navbar-btn navbar-right" ng-click="Test()">시험</button>
-	<!-- a class="" ng-if="!currentUser" ng-href="#/login">로그인</a-->
-	<button type="button" class="btn btn-default navbar-btn navbar-right" ng-if="currentUser" ng-click="logout()">로그아웃 {{currentUser.firstName}}</a></li>
-	
-    <!--div class="" id="bs-example-navbar-collapse-1">
-        <button type="button" class="btn btn-warning navbar-btn" ng-click="Test()">시험</button>
-        <ul class="nav navbar-nav navbar-right">
-          <li ng-if="!currentUser"><a ng-href="#/login">로그인</a></li>
-          <li ng-if="!currentUser"><a ng-href="#/signup">회원가입</a></li>
-          <li ng-if="currentUser"><a href="" ng-click="logout()">로그아웃 {{currentUser.firstName}}</a></li>
-        </ul>
-    </div-->
-	
-  </div>
-</nav>
+<div class="navbar-xs">
+   <div class="navbar-primary">
+        <nav class="navbar  navbar-fixed-top" role="navigation" ng-controller="navbarCtrl" >
+          <div class="container navbar-primary">
+        	
+        	<a class="navbar-brand" href="/#/main"><i class="fa fa-random"></i> <b>SWR</b></a>
+        	<button type="button" class="btn btn-warning navbar-btn btn-sm navbar-right" ng-click="Test()">시험</button>
+        	<!-- a class="" ng-if="!currentUser" ng-href="#/login">로그인</a-->
+        	<button type="button" class="btn btn-default navbar-btn navbar-right" ng-if="currentUser" ng-click="logout()">로그아웃 {{currentUser.firstName}}</a></li>
+        	
+            <!--div class="" id="bs-example-navbar-collapse-1">
+                <button type="button" class="btn btn-warning navbar-btn" ng-click="Test()">시험</button>
+                <ul class="nav navbar-nav navbar-right">
+                  <li ng-if="!currentUser"><a ng-href="#/login">로그인</a></li>
+                  <li ng-if="!currentUser"><a ng-href="#/signup">회원가입</a></li>
+                  <li ng-if="currentUser"><a href="" ng-click="logout()">로그아웃 {{currentUser.firstName}}</a></li>
+                </ul>
+            </div-->
+        	
+          </div>
+        </nav>
+	</div>
+</div>	
 <br>
 <br>
 <div class="container" >      

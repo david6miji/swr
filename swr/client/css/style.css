@@ -16,13 +16,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* body */
-.body-withme {
-    background-color: #CCFF66;
+.body-swr {
+    background-color: #FFFFFF;
 }
 
 /* navbar */
 .container {
-    background-color: #fffff0;
 	margin: 0px auto;
 	height : 100%;
     width: 970px;
@@ -30,14 +29,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* navbar */
-.navbar-default {
-    background-color: #FFFF66;
-    border-color: #2BC071;
+.navbar-primary .navbar { background:#9f58b5; border-bottom:none; }
+.navbar-primary .navbar .nav > li > a {color: #501762;}
+.navbar-primary .navbar .nav > li > a:hover {color: #fff; background-color: #8e49a3;}
+.navbar-primary .navbar .nav .active > a,.navbar .nav .active > a:hover {color: #fff; background-color: #501762;}
+.navbar-primary .navbar .nav li > a .caret, .tnav .navbar .nav li > a:hover .caret {border-top-color: #fff;border-bottom-color: #fff;}
+.navbar-primary .navbar .nav > li.dropdown.open.active > a:hover {}
+.navbar-primary .navbar .nav > li.dropdown.open > a {color: #fff;background-color: #9f58b5;border-color: #fff;}
+.navbar-primary .navbar .nav > li.dropdown.open.active > a:hover .caret, .tnav .navbar .nav > li.dropdown.open > a .caret {border-top-color: #fff;}
+.navbar-primary .navbar .navbar-brand {color:#fff;}
+.navbar-primary .navbar .nav.pull-right {margin-left: 10px; margin-right: 0;}
+.navbar-xs .navbar-primary .navbar { min-height:28px; height: 28px; }
+.navbar-xs .navbar-primary .navbar .navbar-brand{ padding: 0px 12px;font-size: 16px;line-height: 28px; }
+.navbar-xs .navbar-primary .navbar .navbar-nav > li > a {  padding-top: 0px; padding-bottom: 0px; line-height: 28px; }
+.navbar-sm .navbar-primary .navbar { min-height:40px; height: 40px; }
+.navbar-sm .navbar-primary .navbar .navbar-brand{ padding: 0px 12px;font-size: 16px;line-height: 40px; }
+.navbar-sm .navbar-primary .navbar .navbar-nav > li > a {  padding-top: 0px; padding-bottom: 0px; line-height: 40px; }
+
+.navbar-primary {
 	font-family: 'Jeju Gothic', sans-serif;
-}
-/* title */
-.navbar-default .navbar-brand {
-    color: #000000;
 }
 
 /* CodeMirror */
