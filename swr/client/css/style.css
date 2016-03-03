@@ -1,0 +1,47 @@
+
+/* À¥ ÆùÆ® */
+@import url(http://fonts.googleapis.com/earlyaccess/kopubbatang.css");
+@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css");
+@import url(http://fonts.googleapis.com/earlyaccess/jejumyeongjo.css");
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css");
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothiccoding.css");
+
+html, body { 
+    height:100%; 
+	font-family: 'Jeju Myeongjo', serif;
+}
+
+h1, h2, h3, h4, h5, h6 { 
+	font-family: 'KoPub Batang', serif;
+}
+
+/* body */
+.body-withme {
+    background-color: #CCFF66;
+}
+
+/* navbar */
+.container {
+    background-color: #fffff0;
+	margin: 0px auto;
+	height : 100%;
+    width: 970px;
+    max-width: none !important;
+}
+
+/* navbar */
+.navbar-default {
+    background-color: #FFFF66;
+    border-color: #2BC071;
+	font-family: 'Jeju Gothic', sans-serif;
+}
+/* title */
+.navbar-default .navbar-brand {
+    color: #000000;
+}
+
+/* CodeMirror */
+.CodeMirror {
+  border: 1px solid #eee;
+}
+
