@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run --name swr_dev --rm -it -p 6502:3000 -p 35729:35729 -p 6800:6800 -v $(pwd):/work swr_dev:latest
