@@ -20,6 +20,7 @@
     "npm": "^3.7.5",
     "serve-favicon": "^2.0.1",
     "share": "^0.7.40",
+    "ssh2": "^0.4.14",
     "websocket": "^1.0.22"
   },
   "devDependencies": {

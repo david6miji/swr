@@ -2,7 +2,30 @@
 <div class="row">
 
 	<div class="col-xs-7" >
-	
+
+		<form model="user">
+		<center> 
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:50px;" id="user">호스트</span>
+			    <input type="text" class="form-control" size="36" placeholder="192.168.1.10" ng-model="info.host" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">포트</span>
+				<input type="text" class="form-control" size="36" placeholder="22" ng-model="info.port" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">사용자</span>
+				<input type="text" class="form-control" size="36" placeholder="사용자" ng-model="info.username" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">암호</span>
+				<input type="password" class="form-control" size="36" placeholder="암호" ng-model="info.password" required>
+			</div>
+			<br>
+				<button type="submit" class="btn btn-primary" ng-click="connect(info)"><b>접속</b></button>
+		</center> 		
+		</form> 
+
 	</div>	
 
     <div class="col-xs-5">
