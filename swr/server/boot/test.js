@@ -30,6 +30,7 @@ module.exports = function(app) {
 		
 		conn.on('ready', function() {
 			console.log( 'Event ready ' );
+			console.log( 'app.connection = ', app.connection );
 			
             conn.shell(function(err, stream) {
 				
@@ -43,7 +44,10 @@ module.exports = function(app) {
 				
 				stream.on('data', function(data) {
 					
-                      console.log('STDOUT: ' + data);
+                    console.log('STDOUT: ' + data);
+					if (app.connection.connected ) {
+							app.connection.sendUTF( data );
+					}
 				  
                 });
 				
@@ -51,7 +55,19 @@ module.exports = function(app) {
                       console.log('STDERR: ' + data);
                 });
 				
-                stream.end('ls -l\nexit\n');
+			    app.connection.on('message', function (message) {
+					console.log('STDIN: ' + message.utf8Data);
+					console.log(message);
+					if( message.utf8Data === '\r' ){
+//						stream.push( '\n' );
+						stream.write( '\n' );
+					} else {
+//				        stream.push( message.utf8Data );
+				        stream.write( message.utf8Data );
+					}	
+				});
+
+//                stream.end('ls -l\nexit\n');
 				
             });	
 

@@ -1,15 +1,15 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var livedb = require('livedb');
-var sharejs = require('share');
+// var sharejs = require('share');
 
 var app = module.exports = loopback();
 
-var backend = livedb.client(livedb.memory());
-var share = require('share').server.createClient({backend: backend});
+// var backend = livedb.client(livedb.memory());
+// var share = require('share').server.createClient({backend: backend});
 
-console.log( __dirname );
-console.log( sharejs.scriptsDir );
+// console.log( __dirname );
+// console.log( sharejs.scriptsDir );
 
 app.start = function() {
   // start the web server
@@ -33,15 +33,10 @@ boot(app, __dirname, function(err) {
   if (require.main === module) {
     server = app.start();
 	
-	app.use( loopback.static(sharejs.scriptsDir) );
+//	app.use( loopback.static(sharejs.scriptsDir) );
 
-   var Duplex = require('stream').Duplex;
+//   var Duplex = require('stream').Duplex;
    var WS = require('websocket').server;
-   var verifyClientFunc = function( info ) {
-	   console.log( 'CALL verifyClientFunc()' );
-	   console.log( info.req.url );
-	   return true;
-   }
    
    wss = new WS({
         httpServer: server,
@@ -70,44 +65,47 @@ boot(app, __dirname, function(err) {
             return;
         }
 		
-		var connection = request.accept('doodle-protocol', request.origin);
+		console.log( 'app.connection = ', app.connection );
+//		var connection = request.accept('ssh2-protocol', request.origin);
+		app.connection = request.accept('ssh2-protocol', request.origin);
         console.log((new Date()) + ' Connection accepted.');
 		
-		console.log('connection.connected = ', connection.connected );
+		console.log('connection.connected = ', app.connection.connected );
 		
-		var stream = new Duplex({objectMode: true});
+//		var stream = new Duplex({objectMode: true});
 		
-        stream._read = function() {};
-        stream._write = function(chunk, encoding, callback) {
-//			console.log( 's->c', chunk );
-            if (connection.connected ) {
-                connection.sendUTF(JSON.stringify(chunk));
-            }
-            callback();
-        };
 		
-        stream.on( 'error', function (msg) {
-			connection.close(WS.CLOSE_REASON_PROTOCOL_ERROR);
-		});	
-            
-        stream.on( 'end', function (msg) {
-			connection.close(WS.CLOSE_REASON_NORMAL);
-		});	
+//        stream._read = function() {};
+//        stream._write = function(chunk, encoding, callback) {
+////			console.log( 's->c', chunk );
+//            if (connection.connected ) {
+//                connection.sendUTF(JSON.stringify(chunk));
+//            }
+//            callback();
+//        };
+//		
+//        stream.on( 'error', function (msg) {
+//			connection.close(WS.CLOSE_REASON_PROTOCOL_ERROR);
+//		});	
+//            
+//        stream.on( 'end', function (msg) {
+//			connection.close(WS.CLOSE_REASON_NORMAL);
+//		});	
 
-		connection.on('message', function (message) {
-//		    console.log( 'c->s message : ', message );
-            stream.push( JSON.parse(message.utf8Data) );
-        });
+//		app.connection.on('message', function (message) {
+////		    console.log( 'c->s message : ', message );
+////            stream.push( JSON.parse(message.utf8Data) );
+//        });
 		
-		connection.on('close', function (reasonCode, description) {
+		app.connection.on('close', function (reasonCode, description) {
 //		    console.log( 'c->s ', reasonCode, description );
-            stream.push( null );
-			stream.emit('close');
+//            stream.push( null );
+//			stream.emit('close');
             console.log( 'client went away' );
             connection.close( reasonCode );
         });
 		
-        share.listen( stream );
+//        share.listen( stream );
 		
 		console.log( 'wss.connections.length = ', wss.connections.length );
 		
