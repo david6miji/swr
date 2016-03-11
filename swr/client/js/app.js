@@ -8,11 +8,31 @@ var mainApp = angular.module('mainApp',
    'formlyBootstrap',
    'ui.bootstrap',
 ]);
+
+var BasePage = 'rec_new'; // 'before_login';
 	
 mainApp.config([ '$stateProvider','$urlRouterProvider', '$httpProvider',
 function($stateProvider,$urlRouterProvider,$httpProvider) {
 
   $stateProvider
+    .state('rec_new', {
+		url        : '/rec_new',
+		templateUrl: 'view/rec_new.html',
+		controller : 'recNewCtrl',
+		skipLogin : true
+    })
+    .state('rec_work', {
+		url        : '/rec_work/:id',
+		templateUrl: 'view/rec_work.html',
+		controller : 'recWorkCtrl',
+		skipLogin : true
+    })
+    .state('rec_close', {
+		url        : '/rec_close',
+		templateUrl: 'view/rec_close.html',
+		controller : 'recCloseCtrl',
+		skipLogin : true
+    })
     .state('before_login', {
 		url        : '/before_login',
 		templateUrl: 'view/before_login.html',
@@ -40,7 +60,7 @@ function($stateProvider,$urlRouterProvider,$httpProvider) {
     })
     ;
 
-	$urlRouterProvider.otherwise('before_login');
+	$urlRouterProvider.otherwise( BasePage ); 
 	
     $httpProvider.interceptors.push(function($q, $location, LoopBackAuth,$rootScope) {
         return {
@@ -48,7 +68,7 @@ function($stateProvider,$urlRouterProvider,$httpProvider) {
                  if (rejection.status === 401) {
                      LoopBackAuth.clearUser();
                      LoopBackAuth.clearStorage();
-					 $rootScope.$state.go( 'before_login' );
+					 $rootScope.$state.go( BasePage );
                  }
                  return $q.reject(rejection);
             }
@@ -77,7 +97,7 @@ mainApp.run( ['$rootScope', '$state', 'Account', function($rootScope, $state, Ac
 //		console.log( '  $rootScope.currentUser ', $rootScope.currentUser );
 		 
 		if( !$rootScope.currentUser && !toState.skipLogin ){
-			$state.go('before_login'); 
+			$state.go(BasePage); 
             event.preventDefault();
 		}
     });

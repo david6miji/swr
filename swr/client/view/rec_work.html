@@ -1,0 +1,26 @@
+<section model="workrec">
+
+    <div class="col-xs-11" >
+		
+		<div class="input-group">
+			<span class="input-group-btn"> 
+				<button type="button" class="btn btn-primary" 
+				        data-toggle="tooltip" data-placement="bottom" title="작업종료"
+						ng-click="end(workrec)"
+				>
+					<i class="fa fa-sign-out   "></i>
+				</button>
+			</span>
+			<input type="text" readonly class="form-control" ng-model="workrec.doc_name" > 
+		</div>
+		
+        <div id="term" model="workrec"
+	    	  style='font-family: GulimChe;font-size: 13px;color: #f0f0f0;background: #000000;'
+	    >
+	     
+        </div>
+
+    </div>	
+	
+</section>
+

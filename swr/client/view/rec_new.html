@@ -1,0 +1,39 @@
+<section >
+
+<div class="row">
+
+    <div class="col-xs-6">
+	
+		<form model="record">
+		<center> 
+		   <uib-alert style="padding: 5px; margin-bottom : 0px;" ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+	   
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:50px;" id="rec_name">기록명</span>
+			    <input type="text" class="form-control" size="36" placeholder="기록 이름" ng-model="record.name" required>
+			</div>
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:50px;" id="user">호스트</span>
+			    <input type="text" class="form-control" size="36" placeholder="192.168.1.10" ng-model="record.host" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">포트</span>
+				<input type="text" class="form-control" size="36" placeholder="22" ng-model="record.port" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">사용자</span>
+				<input type="text" class="form-control" size="36" placeholder="사용자" ng-model="record.username" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">암호</span>
+				<input type="password" class="form-control" size="36" placeholder="암호" ng-model="record.password" required>
+			</div>
+			<br>
+				<button type="submit" class="btn btn-primary" ng-click="connect(record)"><i class="fa fa-sign-in"></i> <b>접 속</b></button>
+		</center> 		
+		</form> 
+		
+    </div>	
+</div>	
+</section>
+

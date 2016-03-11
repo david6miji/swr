@@ -1,0 +1,38 @@
+{
+  "name": "Record",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+       "name": {
+          "type": "string",
+    	  "required": true
+       },
+       "description": {
+          "type": "string"
+       },
+       "host": {
+          "type": "string",
+    	  "required": true
+       },
+       "port": {
+          "type": "number",
+    	  "required": true
+       },
+       "username": {
+          "type": "string",
+    	  "required": true
+       },
+       "password": {
+          "type": "string",
+    	  "required": true
+       }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
+
