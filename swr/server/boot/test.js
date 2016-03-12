@@ -23,7 +23,7 @@ module.exports = function(app) {
         }
     );
 
-    Test.connect = function( info, cb) {
+    Test.connect = function(info, cb) {
     	console.log( 'Call Test.connect remote method - data = ', info );
 		
 		var conn = new Client();

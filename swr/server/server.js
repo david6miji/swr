@@ -36,9 +36,10 @@ boot(app, __dirname, function(err) {
 //	app.use( loopback.static(sharejs.scriptsDir) );
 
 //   var Duplex = require('stream').Duplex;
-   var WS = require('websocket').server;
+   var WebSocket       = require('websocket').server;
+   var WebSocketRouter = require('websocket').router;
    
-   wss = new WS({
+   wss = new WebSocket({
         httpServer: server,
         // You should not use autoAcceptConnections for production
         // applications, as it defeats all standard cross-origin protection
@@ -48,26 +49,30 @@ boot(app, __dirname, function(err) {
         autoAcceptConnections: false
     });
 	
-	function originIsAllowed(origin) {
-		console.log( 'CALL ws originIsAllowed()' );
-		console.log( origin );
+	app.wss_router = new WebSocketRouter();
+    app.wss_router.attachServer(wss);
+	
+	function urlIsAllowed(request) {
+		console.log( 'CALL ws urlIsAllowed()' );
+		console.log( request.origin );
+		console.log( request.resource );
         // put logic here to detect whether the specified origin is allowed.
         return true;
     }
-	
+/*	
 	wss.on('request', function(request) {
 		console.log( 'EVENT request' );
-//		console.log( request );
-		if (!originIsAllowed(request.origin)) {
+		console.log( request );
+		if (!urlIsAllowed(request)) {
             // Make sure we only accept requests from an allowed origin
             request.reject();
-            console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+            console.log((new Date()) + ' Connection from origin ' + request.origin + '/' + request.resource + ' rejected.');
             return;
         }
 		
 		console.log( 'app.connection = ', app.connection );
 //		var connection = request.accept('ssh2-protocol', request.origin);
-		app.connection = request.accept('ssh2-protocol', request.origin);
+		app.connection = request.accept('ssh-record-protocol', request.origin);
         console.log((new Date()) + ' Connection accepted.');
 		
 		console.log('connection.connected = ', app.connection.connected );
@@ -110,6 +115,7 @@ boot(app, __dirname, function(err) {
 		console.log( 'wss.connections.length = ', wss.connections.length );
 		
 	});
+*/
 	
 } 	
 

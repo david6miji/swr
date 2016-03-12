@@ -24,7 +24,6 @@ function ($scope,Record, $state ) {
 		$scope.alerts = [{ type: 'danger', msg: msg }];
     };  
 	
-	
 	$scope.record = {
 		name 	    : "default",
 		host 		: "192.168.1.10",

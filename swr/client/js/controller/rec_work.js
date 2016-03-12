@@ -9,18 +9,86 @@
  */
 var mainApp = angular.module('mainApp'); 
 mainApp.controller('recWorkCtrl', 
-[ '$scope', 'Test', '$state', 
-function ($scope,Test, $state ) {
+[ '$scope', 'Record', '$state', '$stateParams',
+function ($scope,Record, $state, $stateParams ) {
 	
 	console.log( 'CALL recWorkCtrl' );
+
+    // 터미널을 준비한다. 	
+	var elem = document.getElementById('term'); 
+	var term = new Terminal({
+      cols: 120,
+      rows: 24,
+      screenKeys: true
+    });
 	
-	$scope.workrec = {
-		doc_name 	: "default",
-		host 		: "192.168.1.10",
-		port 		: 22,
-		username 	: "webconn",
-		password 	: "",
-	};
+	// 처리 ID 를 얻는다. 
+	var record_id = $stateParams.id;
+//	console.log( 'record_id = ', record_id );
+	
+	// 처리 레코드 정보 획득 
+	$scope.record = Record.findOne( { filter: { where: { id: record_id } } },
+	    function(record) { 
+//		      console.log( "CB Record.findOne() success"  );
+//			  console.log( 'record = ', record );
+//			  console.log( '$scope.record = ', $scope.record );
+	          // 레코드 세션 생성 요구
+			  Record.createSSHRecord( { id : record.id } )
+			  .$promise.then(function ( value,responseHeaders) {
+			      console.log( value );
+			      var data = value.data;
+			
+                  if (typeof data== 'object') {
+//			      	  data = JSON.stringify(data, undefined, 2);
+//			      	  console.log( data );
+					  console.log( data["ack"] );
+					  if( data.ack == 'ok' ){
+					      // 웹 소켓 접속 요구 
+                          var host = window.document.location.host;
+						  console.log( 'host = ', host );
+						  var ws = new WebSocket('ws://' + host + '/sshrecord/?id=' + record_id,'ssh-record-protocol' );
+						  
+	                      ws.isConnection = false;
+	                      ws.onopen = function (event) {
+								console.log( 'ws.onopen' );
+								ws.isConnection = true;
+							
+								// 키보드와 웹 소켓과 연결한다.
+								term.on('data', function(data) {
+									console.log( 'key : ', data );
+									if(ws.isConnection){
+										ws.send(data);
+									}
+								});
+							
+                          };
+	                      ws.onerror = function (event) {
+	                      	console.log( 'ws.onerror' );
+	                      	ws.isConnection = false;
+                          };
+	                      ws.onclose = function (event) {
+	                      	console.log( 'ws.onclose' );
+	                      	ws.isConnection = false;
+                          };
+	                      
+                          ws.onmessage = function (event) {
+//                            console.log( 'ws.message' );
+//	                      	  console.log( event.data );
+	                      	  term.write(event.data);
+//	                      	ws.close(1000, 'good');
+                          };
+
+					  }
+//			      	  term.write( data );
+                  }
+		      });
+		 },
+	    function(err) { 
+		      console.log( "CB Record.findOne() fail"  );
+			  console.log( 'err = ', err );
+		 }
+		 
+	);
 	
 	$scope.end = function(info){
 		 console.log( 'CALL $scope.end' );
@@ -31,19 +99,9 @@ function ($scope,Test, $state ) {
 
 	$('[data-toggle="tooltip"]').tooltip()
 	
-	var elem = document.getElementById('term'); 
-	var term = new Terminal({
-      cols: 120,
-      rows: 24,
-      screenKeys: true
-    });
-	
     term.open(elem);
-
-//    term.write('\x1b[39mWelcome to term.js!\x1b[m\r\n');
-//	term.write('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-//	term.write('일이삼사오일이삼사오일이삼사오일이삼\r\n');
-//	term.write('안녕하십니까? 1234567890ABCD\r\n');
+	
+		
 
     term.write('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\r\n');
     term.write('02        1         2         3         4         5         6         7         8         9         10        11        \r\n');
