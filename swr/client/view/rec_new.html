@@ -28,6 +28,10 @@
 				<span class="input-group-addon" style="width:56px; id="password">암호</span>
 				<input type="password" class="form-control" size="36" placeholder="암호" ng-model="record.password" required>
 			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">파일</span>
+				<input type="text" class="form-control" size="36" placeholder="기록 파일 이름" ng-model="record.filename" required>
+			</div>
 			<br>
 				<button type="submit" class="btn btn-primary" ng-click="connect(record)"><i class="fa fa-sign-in"></i> <b>접 속</b></button>
 		</center> 		

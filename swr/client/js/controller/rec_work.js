@@ -29,7 +29,7 @@ function ($scope,Record, $state, $stateParams ) {
 	// 처리 레코드 정보 획득 
 	$scope.record = Record.findOne( { filter: { where: { id: record_id } } },
 	    function(record) { 
-//		      console.log( "CB Record.findOne() success"  );
+		      console.log( "CB Record.findOne() success"  );
 //			  console.log( 'record = ', record );
 //			  console.log( '$scope.record = ', $scope.record );
 	          // 레코드 세션 생성 요구
@@ -90,9 +90,20 @@ function ($scope,Record, $state, $stateParams ) {
 		 
 	);
 	
-	$scope.end = function(info){
+	$scope.end = function(record){
 		 console.log( 'CALL $scope.end' );
-		 console.log( 'info = ', info );
+		 console.log( 'record = ', record );
+		 
+		 Record.closeSSHRecord( { id : record.id },
+		     function(record) { 
+		          console.log( "CB Record.closeSSHRecord() success"  );
+		    	  console.log( 'record = ', record );
+		      },
+	         function(err) { 
+		          console.log( "CB Record.closeSSHRecord() fail"  );
+		    	  console.log( 'err = ', err );
+		     }
+		 );
 		 
 		 $state.go( 'rec_close' );
   	};
@@ -101,32 +112,8 @@ function ($scope,Record, $state, $stateParams ) {
 	
     term.open(elem);
 	
-		
-
     term.write('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\r\n');
     term.write('02        1         2         3         4         5         6         7         8         9         10        11        \r\n');
-    term.write('03CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('04CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('05CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('06CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('07CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('08CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('09CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('10CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('11CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('12CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('13CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('14CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('15CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('16CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('17CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('18CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('19CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('20CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('21CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('22CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-    term.write('23CDEFGHIJKLMNOPQRSTUVWXYZ1234567890\r\n');
-	
 	
 }]);  
 

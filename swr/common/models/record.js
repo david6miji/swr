@@ -1,12 +1,18 @@
+var path = require('path');
+var fs = require("fs");
 var Client = require('ssh2').Client;
 var app = require('../../server/server');
 
 module.exports = function(Record) {
-	
-	var RecordInstant = {};
 
-	// 웹 소켓 연결을 사전에 설정해 놓는다. 
+	var RecordInstant = {};
+	var log_root = "/data/logs/";
+	var log_ext  = ".log";
+
+    // 로그 디렉토리 체크 및 생성
+	try{ fs.accessSync(log_root); }catch(e){ fs.mkdirSync(log_root); }
 	
+	// 웹 소켓 연결 권한 체크
 	function urlIsAllowed(request,id) {
 		console.log( 'CALL ws urlIsAllowed()' );
 		console.log( request.origin );
@@ -22,6 +28,67 @@ module.exports = function(Record) {
         return true;
     }
 
+	// 로그 헤드 기록 
+    function log_open(id,record){
+		// 파일 쓰기 스트림을 만든다 
+		var log_filename = log_root 
+		             + record.filename 
+					 + log_ext;
+		
+		console.log( log_filename );
+		RecordInstant[id].writableStream = fs.createWriteStream( log_filename );
+		
+		var log = RecordInstant[id].writableStream;
+		log.write( '{'         + '\n' );
+		
+		var textobj =  '"info" :'  + JSON.stringify(record) + ',\n';
+		log.write( textobj  );
+		
+		log.write( '"log" : ['         + '\n' );
+		
+	}
+	
+    function log_close(id,record){
+		var log = RecordInstant[id].writableStream;
+		
+		var logend = { logend : "end" };
+		var textlogend =  '        ' 
+		             + JSON.stringify(logend)
+					 + '\n';
+		
+		log.write(textlogend);		
+		
+		log.write( '        ]'         + '\n' );
+		log.write( "}\n" );
+	}
+	
+    function log_write_stdout(id, data){
+		
+		var log = RecordInstant[id].writableStream;
+		
+		var stdout = { stdout : data.toString('utf8') };
+		var textout =  '        ' 
+		             + JSON.stringify(stdout)
+					 + ','
+					 + '\n';
+		
+		log.write(textout);		
+	}
+	
+    function log_write_stdin(id, data){
+		
+		var log = RecordInstant[id].writableStream;
+		
+		var stdin = { stdin : data };
+		var textin =  '        ' 
+		             + JSON.stringify(stdin)
+					 + ','
+					 + '\n';
+		
+		log.write(textin);		
+	}
+	
+	// 웹 소켓 연결을 사전에 설정해 놓는다. 
     function build_websocket_router(){
 		// 웹 소켓 라우터 처리 전이라면 무시 
 		if( !app.wss_router ) return;
@@ -53,12 +120,16 @@ module.exports = function(Record) {
 				console.log((new Date()) + ' ssh-record-protocol connection accepted from ' + connection.remoteAddress +
                 ' - Protocol Version ' + connection.webSocketVersion);
 
+			RecordInstant[id].connection = connection;
+			
 			// 웹 소켓 데이터 이벤트를 쉘에 연결한다. 
 			connection.on('message', function(message) {
 				console.log( 'RX : ', message );
 					if( message.utf8Data === '\r' ){
+						log_write_stdin(id, '\n');
 						RecordInstant[id].stream.write( '\n' );
 					} else {
+						log_write_stdin(id, message.utf8Data);
 				        RecordInstant[id].stream.write( message.utf8Data );
 					}					
 			});
@@ -71,25 +142,45 @@ module.exports = function(Record) {
 				console.log('Connection error for peer ' + connection.remoteAddress + ': ' + error);
 			});
 			
+			// 쉘 연결 처리 
+			
+			SSHShell.on('error', function(err) {
+				console.log( 'Event error' );
+				console.log( 'err = ', err );
+				// 에러 처리를 나중에 추가 한다. 
+			});
+			
 			SSHShell.on('ready', function() {
 			    console.log( 'Event ready ' );
 				SSHShell.shell(function(err, stream) {
-					if (err) throw err;
+					if (err) {
+					//	throw err;
+					// 에러 처리를 한다. 
+					}	
 					
 					RecordInstant[id].stream = stream;
-					
+
+					// 로그 파일을 연다. 
+					log_open(id,record)
+
+					// 쉘이 종료 되었을때의 처리 
 					stream.on('close', function() {
 						
 						console.log('Stream : close');
+						log_close(id,record);
 						SSHShell.end();
 					
 					});
 					
+					// 쉘의 출력 처리 
 					stream.on('data', function(data) {
 						console.log('STDOUT: ' + data);
+						
+						log_write_stdout(id, data);
 						connection.sendUTF( data );
 					});
 					
+					// 쉘 에러 처리 
 					stream.stderr.on('data', function(data) {
 						console.log('STDERR : ' + data);
 					});
@@ -133,7 +224,7 @@ module.exports = function(Record) {
 				// 인스탄트에 쉘 클라이언트 인스턴스를 설정한다.
 				RecordInstant[record.id].SSHShell = new Client();
 				RecordInstant[record.id].record   = record;
-
+				
 				var response = { ack : 'ok' };
 				cb(null, response);
 			}
@@ -149,5 +240,36 @@ module.exports = function(Record) {
           returns: {arg: 'data', type: 'object' }
         }
     );
+
+    Record.closeSSHRecord = function( data, cb) {
+    	console.log( 'Call method : Record.closeSSHRecord - data = ', data );
+		
+		// 쉘과 종료 처리를 한다 
+		var id          = data.id;
+		var SSHShell 	= RecordInstant[id].SSHShell;
+		var record 		= RecordInstant[id].record;		
+		var connection	= RecordInstant[id].connection;
+		
+//		console.log(  record     );
+//		console.log(  SSHShell   );
+//		console.log(  connection );
+		
+		SSHShell.end(); 
+		connection.close(); 
+		
+		var response = { ack : 'ok' };
+		cb(null, response);
+		
+    };
+	
+    Record.remoteMethod(
+        'closeSSHRecord',
+        {
+          http: {path: '/closeSSHRecord', verb: 'post'},
+          accepts: {arg: 'data', type: 'object', http: { source: 'body' } },
+          returns: {arg: 'data', type: 'object' }
+        }
+    );
 	
 };
+

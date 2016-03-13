@@ -30,6 +30,7 @@ function ($scope,Record, $state ) {
 		port 		: 22,
 		username 	: "webconn",
 		password 	: "",
+		filename    : "default",
 	};
 	
 	$scope.connect = function(record){
@@ -42,10 +43,12 @@ function ($scope,Record, $state ) {
 //  				  console.log( recordResult );
 //  				  console.log( $scope.record );
 				  
+				  recordResult.name     = $scope.record.name;
 				  recordResult.host     = $scope.record.host;
 				  recordResult.port     = $scope.record.port;
 				  recordResult.username = $scope.record.username;
 				  recordResult.password = $scope.record.password;
+				  recordResult.filename = $scope.record.filename;
 				  recordResult.$save();
 				  
 				  $state.go( 'rec_work', { id : recordResult.id } );
