@@ -1,3 +1,4 @@
+var os = require('os');
 var path = require('path');
 var fs = require("fs");
 var Client = require('ssh2').Client;
@@ -46,10 +47,15 @@ module.exports = function(Record) {
 		
 		log.write( '"log" : ['         + '\n' );
 		
+		RecordInstant[id].stdout_remaining = '';
+		
 	}
 	
     function log_close(id,record){
+		
 		var log = RecordInstant[id].writableStream;
+		
+		log_write_stdout_remaining(id);
 		
 		var logend = { logend : "end" };
 		var textlogend =  '        ' 
@@ -65,18 +71,72 @@ module.exports = function(Record) {
     function log_write_stdout(id, data){
 		
 		var log = RecordInstant[id].writableStream;
+		var str = data.toString('utf8');
+		var remaining = RecordInstant[id].stdout_remaining;
 		
-		var stdout = { stdout : data.toString('utf8') };
-		var textout =  '        ' 
-		             + JSON.stringify(stdout)
-					 + ','
-					 + '\n';
+		remaining += str;
 		
-		log.write(textout);		
+		var index = remaining.indexOf('\n');
+		var last  = 0;
+		
+		while (index > -1) {
+			var line = remaining.substring(last, index+1);
+			last = index + 1;
+//			console.log( 'line = ', line );
+			
+			var stdout = { stdout : line };
+			var textout =  '        ' 
+						+ JSON.stringify(stdout)
+						+ ','
+						+ '\n';
+			
+			log.write(textout);		
+			
+			index = remaining.indexOf('\n', last);
+		}
+
+		remaining = remaining.substring(last);		
+		RecordInstant[id].stdout_remaining = remaining;
+		
+//		var lines = str.split(os.EOL);
+		
+//		console.log( 'str = ', str );
+		
+//		var stdout = { stdout : data.toString('utf8') };
+//		var textout =  '        ' 
+//		             + JSON.stringify(stdout)
+//					 + ','
+//					 + '\n';
+//		
+//		log.write(textout);		
+	}
+	
+    function log_write_stdout_remaining(id){
+		
+		var log = RecordInstant[id].writableStream;
+	    var remaining = RecordInstant[id].stdout_remaining;
+		
+		if( remaining !== '' ){
+			
+//			console.log( 'remaining = ', remaining );	
+			
+		    var stdout = { stdout : remaining };
+		    var textout =  '        ' 
+		                 + JSON.stringify(stdout)
+		    			 + ','
+		    			 + '\n';
+		    
+		    log.write(textout);		
+			
+			RecordInstant[id].stdout_remaining = '';
+		}	
+		
 	}
 	
     function log_write_stdin(id, data){
 		
+		log_write_stdout_remaining(id);
+			
 		var log = RecordInstant[id].writableStream;
 		
 		var stdin = { stdin : data };
@@ -124,14 +184,14 @@ module.exports = function(Record) {
 			
 			// 웹 소켓 데이터 이벤트를 쉘에 연결한다. 
 			connection.on('message', function(message) {
-				console.log( 'RX : ', message );
-					if( message.utf8Data === '\r' ){
-						log_write_stdin(id, '\n');
-						RecordInstant[id].stream.write( '\n' );
-					} else {
-						log_write_stdin(id, message.utf8Data);
-				        RecordInstant[id].stream.write( message.utf8Data );
-					}					
+//				console.log( 'RX : ', message );
+				if( message.utf8Data === '\r' ){
+					log_write_stdin(id, '\n');
+					RecordInstant[id].stream.write( '\n' );
+				} else {
+					log_write_stdin(id, message.utf8Data);
+				    RecordInstant[id].stream.write( message.utf8Data );
+				}					
 			});
 			
 			connection.on('close', function(closeReason, description) {
@@ -174,7 +234,7 @@ module.exports = function(Record) {
 					
 					// 쉘의 출력 처리 
 					stream.on('data', function(data) {
-						console.log('STDOUT: ' + data);
+//						console.log('STDOUT: ' + data);
 						
 						log_write_stdout(id, data);
 						connection.sendUTF( data );

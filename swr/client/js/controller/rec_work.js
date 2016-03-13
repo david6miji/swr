@@ -55,7 +55,7 @@ function ($scope,Record, $state, $stateParams ) {
 							
 								// 키보드와 웹 소켓과 연결한다.
 								term.on('data', function(data) {
-									console.log( 'key : ', data );
+//									console.log( 'key : ', data );
 									if(ws.isConnection){
 										ws.send(data);
 									}
