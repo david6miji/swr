@@ -24,7 +24,7 @@ function ($scope,Record, $state, $stateParams ) {
 	
 	// 처리 ID 를 얻는다. 
 	var record_id = $stateParams.id;
-//	console.log( 'record_id = ', record_id );
+	console.log( 'record_id = ', record_id );
 	
 	// 처리 레코드 정보 획득 
 	$scope.record = Record.findOne( { filter: { where: { id: record_id } } },
@@ -98,14 +98,16 @@ function ($scope,Record, $state, $stateParams ) {
 		     function(record) { 
 		          console.log( "CB Record.closeSSHRecord() success"  );
 		    	  console.log( 'record = ', record );
+				  $state.go( 'rec_close', { id : record.id } );
 		      },
 	         function(err) { 
 		          console.log( "CB Record.closeSSHRecord() fail"  );
 		    	  console.log( 'err = ', err );
+				  $state.go( 'rec_close', { id : record.id } );
 		     }
 		 );
 		 
-		 $state.go( 'rec_close' );
+		 
   	};
 
 	$('[data-toggle="tooltip"]').tooltip()

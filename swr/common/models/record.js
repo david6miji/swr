@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require("fs");
 var Client = require('ssh2').Client;
 var app = require('../../server/server');
+var swr_convert = require('../../server/lib/swr_convert');
 
 module.exports = function(Record) {
 
@@ -46,8 +47,18 @@ module.exports = function(Record) {
 		log.write( textobj  );
 		
 		log.write( '"log" : ['         + '\n' );
-		
+
 		RecordInstant[id].stdout_remaining = '';
+		RecordInstant[id].stdout_remaining_time = 0;
+		RecordInstant[id].log_seq          = 0;
+
+		var logstart = { seq : 0, time : Number(new Date()), cmd : "logstart", data : "start" };
+		var textlogstart =  '        ' 
+		             + JSON.stringify(logstart)
+					 + ','
+					 + '\n';
+		
+		log.write(textlogstart);		
 		
 	}
 	
@@ -57,7 +68,12 @@ module.exports = function(Record) {
 		
 		log_write_stdout_remaining(id);
 		
-		var logend = { logend : "end" };
+		var log_seq = RecordInstant[id].log_seq + 1;
+		              RecordInstant[id].log_seq++;
+					  
+		var log_time = Number(new Date());
+		
+		var logend = { seq : log_seq, time : log_time, cmd : "logend", data : "end" };
 		var textlogend =  '        ' 
 		             + JSON.stringify(logend)
 					 + '\n';
@@ -73,6 +89,8 @@ module.exports = function(Record) {
 		var log = RecordInstant[id].writableStream;
 		var str = data.toString('utf8');
 		var remaining = RecordInstant[id].stdout_remaining;
+
+		RecordInstant[id].stdout_remaining_time = Number(new Date());
 		
 		remaining += str;
 		
@@ -82,9 +100,12 @@ module.exports = function(Record) {
 		while (index > -1) {
 			var line = remaining.substring(last, index+1);
 			last = index + 1;
-//			console.log( 'line = ', line );
+
+			var log_seq = RecordInstant[id].log_seq + 1;
+		                  RecordInstant[id].log_seq++;
+			var stdout_remaining_time = RecordInstant[id].stdout_remaining_time;
 			
-			var stdout = { stdout : line };
+			var stdout = { seq : log_seq, time : stdout_remaining_time, cmd : "stdout", data : line };
 			var textout =  '        ' 
 						+ JSON.stringify(stdout)
 						+ ','
@@ -97,6 +118,9 @@ module.exports = function(Record) {
 
 		remaining = remaining.substring(last);		
 		RecordInstant[id].stdout_remaining = remaining;
+		if( remaining === '' ){
+			RecordInstant[id].stdout_remaining_time = 0;
+		}	
 		
 //		var lines = str.split(os.EOL);
 		
@@ -120,7 +144,12 @@ module.exports = function(Record) {
 			
 //			console.log( 'remaining = ', remaining );	
 			
-		    var stdout = { stdout : remaining };
+			var log_seq = RecordInstant[id].log_seq + 1;
+		                  RecordInstant[id].log_seq++;
+			var stdout_remaining_time = RecordInstant[id].stdout_remaining_time;
+			RecordInstant[id].stdout_remaining_time = 0;
+						  
+		    var stdout = { seq : log_seq, time : stdout_remaining_time, cmd : "stdout", data : remaining };
 		    var textout =  '        ' 
 		                 + JSON.stringify(stdout)
 		    			 + ','
@@ -137,9 +166,13 @@ module.exports = function(Record) {
 		
 		log_write_stdout_remaining(id);
 			
-		var log = RecordInstant[id].writableStream;
+		var log 	= RecordInstant[id].writableStream;
+		var log_seq = RecordInstant[id].log_seq + 1;
+		              RecordInstant[id].log_seq++;
+		var log_time = Number(new Date());
 		
-		var stdin = { stdin : data };
+		var stdin = { seq : log_seq, time : log_time, cmd : "stdin", data : data };
+		
 		var textin =  '        ' 
 		             + JSON.stringify(stdin)
 					 + ','
@@ -300,6 +333,8 @@ module.exports = function(Record) {
           returns: {arg: 'data', type: 'object' }
         }
     );
+	
+
 
     Record.closeSSHRecord = function( data, cb) {
     	console.log( 'Call method : Record.closeSSHRecord - data = ', data );
@@ -331,5 +366,85 @@ module.exports = function(Record) {
         }
     );
 	
+    Record.fileLogSSHRecord = function( data, cb) {
+    	console.log( 'Call method : Record.fileLogSSHRecord - data = ', data );
+		var id          = data.id;
+
+		// id 에 해당하는 레코드 정보를 얻어 온다. 
+		Record.findById(data.id, function(err,record) {
+			console.log( "CB Record.findById"  );
+			if( err ){
+			    console.log( 'err = ', err );	
+				var response = { ack : 'fail' };
+				cb(null, response);
+				
+			} else {
+			    console.log( record );	
+				
+				// 로그 파일 이름을 얻는다. 
+				var log_filename = log_root 
+								 + record.filename 
+								 + log_ext;
+		
+				var log_obj = JSON.parse( fs.readFileSync( log_filename, 'utf8'));	
+				
+				var response = { ack : 'ok', content : log_obj };
+				cb(null, response);
+			}
+
+		});
+
+    };
+	
+    Record.remoteMethod(
+        'fileLogSSHRecord',
+        {
+          http: {path: '/fileLogSSHRecord', verb: 'post'},
+          accepts: {arg: 'data', type: 'object', http: { source: 'body' } },
+          returns: {arg: 'data', type: 'object' }
+        }
+    );	
+
+    Record.convertLogSSHRecord = function( data, cb) {
+    	console.log( 'Call method : Record.convertLogSSHRecord - data = ', data );
+		
+		// 쉘과 종료 처리를 한다 
+		var id          = data.id;
+		
+		// id 에 해당하는 레코드 정보를 얻어 온다. 
+		Record.findById(data.id, function(err,record) {
+			console.log( "CB Record.findById"  );
+			if( err ){
+			    console.log( 'err = ', err );	
+				var response = { ack : 'fail' };
+				cb(null, response);
+			} else {
+			    console.log( record );	
+				
+				
+				// 로그 파일 이름을 얻는다. 
+				var log_filename = log_root 
+								 + record.filename 
+								 + log_ext;
+		
+				swr_convert( log_filename );
+				
+				var response = { ack : 'ok' };
+				cb(null, response);
+			}
+			
+		});
+		
+    };
+	
+    Record.remoteMethod(
+        'convertLogSSHRecord',
+        {
+          http: {path: '/convertLogSSHRecord', verb: 'post'},
+          accepts: {arg: 'data', type: 'object', http: { source: 'body' } },
+          returns: {arg: 'data', type: 'object' }
+        }
+    );
+
 };
 

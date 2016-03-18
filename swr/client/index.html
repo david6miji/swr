@@ -8,6 +8,9 @@
 	<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/lib/jstree/dist/themes/default/style.min.css">
 	<link rel="stylesheet" type="text/css" href="/lib/components-font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/lib/angular-ui-grid/ui-grid.min.css">
+	<link rel="stylesheet" type="text/css" href="/lib/ng-table/dist/ng-table.min.css">
+	
 	<link rel="stylesheet" type="text/css" href="/lib/codemirror/lib/codemirror.css">
 	
 	<!-- 자체 스타일시트 -->
@@ -23,6 +26,10 @@
           <div class="container navbar-primary">
         	
         	<a class="navbar-brand" href="/#/main"><i class="fa fa-random"></i> <b>SWR</b></a>
+        	<button type="button" class="btn btn-info navbar-btn btn-sm btn-nav" ng-click="List()">
+			    <i class="fa fa-list"></i><b> 목록</b></button>
+        	<button type="button" class="btn btn-info navbar-btn btn-sm btn-nav" ng-click="New()">
+			    <i class="fa fa-list"></i><b> 새로 작성</b></button>
         	<button type="button" class="btn btn-warning navbar-btn btn-sm" ng-click="Test()">시험</button>
         	<!-- a class="" ng-if="!currentUser" ng-href="#/login">로그인</a-->
         	<button type="button" class="btn btn-default navbar-btn navbar-right" ng-if="currentUser" ng-click="logout()">로그아웃 {{currentUser.firstName}}</a></li>
@@ -54,10 +61,15 @@
 <script src="/lib/angular-resource/angular-resource.min.js"></script>
 <script src="/lib/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="/lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="/lib/angular-ui-grid/ui-grid.min.js"></script>
+<script src="/lib/ng-table/dist/ng-table.min.js"></script>
+
 
 <script src="/lib/api-check/dist/api-check.min.js"></script>
 <script src="/lib/angular-formly/dist/formly.min.js"></script>
 <script src="/lib/angular-formly-templates-bootstrap/dist/angular-formly-templates-bootstrap.min.js"></script>
+
+
 
 <script src="/js/service/lb-services.js"></script>
 
@@ -73,6 +85,8 @@
 <script src="/js/service/auth-services.js"></script>
 
 <script src="/js/controller/navbar.js"></script>
+<script src="/js/controller/rec_list.js"></script>
+<script src="/js/controller/rec_edit.js"></script>
 <script src="/js/controller/rec_new.js"></script>
 <script src="/js/controller/rec_work.js"></script>
 <script src="/js/controller/rec_close.js"></script>

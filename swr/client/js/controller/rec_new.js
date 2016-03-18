@@ -37,8 +37,22 @@ function ($scope,Record, $state ) {
 //		 console.log( 'CALL $scope.connect' );
 //		 console.log( 'record = ', record );
 		 
+       Record.create( record,
+           function(recordResult) { /* success */ 
+//     	      console.log( "CB Record.create() success"  );
+//     		  console.log( recordResult );
+               $state.go( 'rec_work', { id : recordResult.id } );
+           },
+           function(errorResponse) { /* error */ 
+//     	       console.log( "CB Record.create() error"  );
+//     		   console.log( errorResponse );
+			   $scope.setAlert( '['+ errorResponse.status + '] ' + errorResponse.statusText);
+           }
+       );
+					  
+/*					  
 		 Record.findOne( { filter: { where: { name : record.name } } } , 
-  		     function(recordResult) { /* success */ 
+  		     function(recordResult) { // success 
 //   			      console.log( "CB Record.findOne() success"  );
 //  				  console.log( recordResult );
 //  				  console.log( $scope.record );
@@ -49,29 +63,19 @@ function ($scope,Record, $state ) {
 				  recordResult.username = $scope.record.username;
 				  recordResult.password = $scope.record.password;
 				  recordResult.filename = $scope.record.filename;
+				  recordResult.description = $scope.record.description;
 				  recordResult.$save();
 				  
 				  $state.go( 'rec_work', { id : recordResult.id } );
    	         },
-             function(errorResponse) { /* error */ 
+             function(errorResponse) { // error
 //   			      console.log( "CB Record.findOne() error"  );
 //  				  console.log( errorResponse );
 				  if( errorResponse.status == 404 ){ // status: 404, statusText: "Not Found"
-        		      Record.create( record,
-        		          function(recordResult) { /* success */ 
-//        		     	      console.log( "CB Record.create() success"  );
-//        		     		  console.log( recordResult );
-        		              $state.go( 'rec_work', { id : recordResult.id } );
-        	              },
-                          function(errorResponse) { /* error */ 
-//        		     	       console.log( "CB Record.create() error"  );
-//        		     		   console.log( errorResponse );
-							   $scope.setAlert( '['+ errorResponse.status + '] ' + errorResponse.statusText);
-        		          }
-        		      );
 				  }
    		     }
          );
+*/
 
   	};
 

@@ -13,15 +13,15 @@
 			    <input type="text" class="form-control" size="36" placeholder="기록 이름" ng-model="record.name" required>
 			</div>
 			<div class="input-group input-group-sm">
-			    <span class="input-group-addon" style="width:50px;" id="user">호스트</span>
+			    <span class="input-group-addon" style="width:50px;" id="host">호스트</span>
 			    <input type="text" class="form-control" size="36" placeholder="192.168.1.10" ng-model="record.host" required>
 			</div>
 			<div class="input-group input-group-sm">
-				<span class="input-group-addon" style="width:56px; id="password">포트</span>
+				<span class="input-group-addon" style="width:56px; id="port">포트</span>
 				<input type="text" class="form-control" size="36" placeholder="22" ng-model="record.port" required>
 			</div>
 			<div class="input-group input-group-sm">
-				<span class="input-group-addon" style="width:56px; id="password">사용자</span>
+				<span class="input-group-addon" style="width:56px; id="user">사용자</span>
 				<input type="text" class="form-control" size="36" placeholder="사용자" ng-model="record.username" required>
 			</div>
 			<div class="input-group input-group-sm">
@@ -29,8 +29,12 @@
 				<input type="password" class="form-control" size="36" placeholder="암호" ng-model="record.password" required>
 			</div>
 			<div class="input-group input-group-sm">
-				<span class="input-group-addon" style="width:56px; id="password">파일</span>
+				<span class="input-group-addon" style="width:56px; id="filename">파일</span>
 				<input type="text" class="form-control" size="36" placeholder="기록 파일 이름" ng-model="record.filename" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="doc">설명</span>
+				<input type="textarea" class="form-control" size="36" placeholder="기록 설명" ng-model="record.description" required>
 			</div>
 			<br>
 				<button type="submit" class="btn btn-primary" ng-click="connect(record)"><i class="fa fa-sign-in"></i> <b>접 속</b></button>

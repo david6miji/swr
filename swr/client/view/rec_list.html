@@ -1,0 +1,22 @@
+<section model="records">
+
+<div class="col-xs-11" >
+   
+    <table id="list_table" ng-table="recordsTable" class="table table-bordered table-striped table-hover">
+       <tr ng-repeat="record in data" ng-click="select(record.id)">
+           <td data-title="'Id'" width="50px"  align="right" >
+               {{record.id}}
+           </td>
+           <td data-title="'기 록 명'" width="30%"  >
+               {{record.name}}
+           </td>
+           <td data-title="'설 명'" >
+               {{record.description}}
+           </td>    
+       </tr>
+    </table>
+		
+</div>	
+	
+</section>
+

@@ -1,0 +1,56 @@
+<section >
+
+<div class="row">
+
+    <div class="col-xs-4">
+	
+	    <uib-alert style="padding: 5px; margin-bottom : 0px;" ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+		
+		<form model="record">
+	   
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:56px;" id="rec_id">ID</span>
+			    <input type="text" class="form-control" size="36" placeholder="ID" ng-model="record.id" readonly required>
+			</div>
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:50px;" id="rec_name">기록명</span>
+			    <input type="text" class="form-control" size="36" placeholder="기록 이름" ng-model="record.name" required>
+			</div>
+			<div class="input-group input-group-sm">
+			    <span class="input-group-addon" style="width:50px;" id="host">호스트</span>
+			    <input type="text" class="form-control" size="36" placeholder="192.168.1.10" ng-model="record.host" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="port">포트</span>
+				<input type="text" class="form-control" size="36" placeholder="22" ng-model="record.port" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="user">사용자</span>
+				<input type="text" class="form-control" size="36" placeholder="사용자" ng-model="record.username" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="password">암호</span>
+				<input type="password" class="form-control" size="36" placeholder="암호" ng-model="record.password" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="filename">파일</span>
+				<input type="text" class="form-control" size="36" placeholder="기록 파일 이름" ng-model="record.filename" required>
+			</div>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" style="width:56px; id="doc">설명</span>
+				<input type="textarea" class="form-control" size="36" placeholder="기록 설명" ng-model="record.description" required>
+			</div>
+			<br>
+				<button type="submit" class="btn btn-primary" ng-click="run(record)"><i class="fa fa-sign-in"></i> <b>실 행</b></button>
+				<button type="submit" class="btn btn-primary" ng-click="modify(record)"><i class="fa fa-pencil-square-o"></i> <b>수 정</b></button>
+				<button type="submit" class="btn btn-primary" ng-click="delete(record)"><i class="fa fa-trash"></i> <b>삭 제</b></button>
+		</form> 
+		
+    </div>	
+	
+    <div class="col-xs-6">
+    </div>	
+	
+</div>	
+</section>
+

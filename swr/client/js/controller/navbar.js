@@ -2,11 +2,24 @@
 'use strict';
 
 var mainApp = angular.module('mainApp'); 
-mainApp.controller('navbarCtrl', [ '$scope', 'authServices', 'Test',  function ($scope, authServices , Test ) {
+mainApp.controller('navbarCtrl', 
+[ 
+			  '$scope','authServices','$state',  'Test',
+	function ($scope, authServices, $state , Test ) {
 
  	$scope.logout = function  () {
  		authServices.logout();
  	};
+	
+ 	$scope.List = function  () {
+		console.log( 'call List in Nav' );
+		$state.go( 'rec_list' );
+	}
+	
+ 	$scope.New = function  () {
+		console.log( 'call New in Nav' );
+		$state.go( 'rec_new' );
+	}
 
  	$scope.Test = function  () {
 		
@@ -19,7 +32,7 @@ mainApp.controller('navbarCtrl', [ '$scope', 'authServices', 'Test',  function (
 				  data = JSON.stringify(data, undefined, 2);
 				  console.log( data );
             }
-				  
+
 		});
  		
  	};

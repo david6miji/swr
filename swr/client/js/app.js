@@ -7,14 +7,32 @@ var mainApp = angular.module('mainApp',
    'formly', 
    'formlyBootstrap',
    'ui.bootstrap',
+   'ui.grid',
+   'ui.grid.pagination',
+   'ui.grid.selection', 
+   'ui.grid.saveState',
+   "ngTable",
 ]);
 
-var BasePage = 'rec_new'; // 'before_login';
+var BasePage = 'rec_list'; // 'before_login';
 	
 mainApp.config([ '$stateProvider','$urlRouterProvider', '$httpProvider',
 function($stateProvider,$urlRouterProvider,$httpProvider) {
 
   $stateProvider
+  
+    .state('rec_list', {
+		url        : '/rec_list/',
+		templateUrl: 'view/rec_list.html',
+		controller : 'recListCtrl',
+		skipLogin : true
+    })
+    .state('rec_edit', {
+		url        : '/rec_edit/:id',
+		templateUrl: 'view/rec_edit.html',
+		controller : 'recEditCtrl',
+		skipLogin : true
+    })
     .state('rec_new', {
 		url        : '/rec_new',
 		templateUrl: 'view/rec_new.html',
@@ -28,7 +46,7 @@ function($stateProvider,$urlRouterProvider,$httpProvider) {
 		skipLogin : true
     })
     .state('rec_close', {
-		url        : '/rec_close',
+		url        : '/rec_close/:id',
 		templateUrl: 'view/rec_close.html',
 		controller : 'recCloseCtrl',
 		skipLogin : true
@@ -77,7 +95,6 @@ function($stateProvider,$urlRouterProvider,$httpProvider) {
 	
 	
 }]);
-
 
 mainApp.run( ['$rootScope', '$state', 'Account', function($rootScope, $state, Account ){
 
