@@ -33,6 +33,12 @@ function($stateProvider,$urlRouterProvider,$httpProvider) {
 		controller : 'recEditCtrl',
 		skipLogin : true
     })
+    .state('rec_run', {
+		url        : '/rec_run/:id',
+		templateUrl: 'view/rec_run.html',
+		controller : 'recRunCtrl',
+		skipLogin : true
+    })
     .state('rec_new', {
 		url        : '/rec_new',
 		templateUrl: 'view/rec_new.html',

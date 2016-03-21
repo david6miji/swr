@@ -35,6 +35,7 @@ function ($scope,Record, $state, $stateParams ) {
 	          // 레코드 세션 생성 요구
 			  Record.createSSHRecord( { id : record.id } )
 			  .$promise.then(function ( value,responseHeaders) {
+				  console.log( "CB Record.createSSHRecord() success"  );
 			      console.log( value );
 			      var data = value.data;
 			
@@ -46,7 +47,7 @@ function ($scope,Record, $state, $stateParams ) {
 					      // 웹 소켓 접속 요구 
                           var host = window.document.location.host;
 						  console.log( 'host = ', host );
-						  var ws = new WebSocket('ws://' + host + '/sshrecord/?id=' + record_id,'ssh-record-protocol' );
+						  var ws = new WebSocket('ws://' + host + '/sshrecord/recording/?id=' + record_id,'ssh-record-protocol' );
 						  
 	                      ws.isConnection = false;
 	                      ws.onopen = function (event) {
@@ -94,14 +95,14 @@ function ($scope,Record, $state, $stateParams ) {
 		 console.log( 'CALL $scope.end' );
 		 console.log( 'record = ', record );
 		 
-		 Record.closeSSHRecord( { id : record.id },
+		 Record.destroySSHRecord( { id : record.id },
 		     function(record) { 
-		          console.log( "CB Record.closeSSHRecord() success"  );
+		          console.log( "CB Record.destroySSHRecord() success"  );
 		    	  console.log( 'record = ', record );
 				  $state.go( 'rec_close', { id : record.id } );
 		      },
 	         function(err) { 
-		          console.log( "CB Record.closeSSHRecord() fail"  );
+		          console.log( "CB Record.destroySSHRecord() fail"  );
 		    	  console.log( 'err = ', err );
 				  $state.go( 'rec_close', { id : record.id } );
 		     }

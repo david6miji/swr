@@ -3,6 +3,9 @@ var boot = require('loopback-boot');
 var livedb = require('livedb');
 // var sharejs = require('share');
 
+var SR = require('../server/lib/swr_recording');
+var SwrRecording = new SR();
+
 var app = module.exports = loopback();
 
 // var backend = livedb.client(livedb.memory());
@@ -51,7 +54,11 @@ boot(app, __dirname, function(err) {
 	
 	app.wss_router = new WebSocketRouter();
     app.wss_router.attachServer(wss);
+	app.wss_router.mount('/sshrecord/recording/', 'ssh-record-protocol', function(request) {
+		SwrRecording.handlerWebSocket( request );
+	});
 	
+/*		
 	function urlIsAllowed(request) {
 		console.log( 'CALL ws urlIsAllowed()' );
 		console.log( request.origin );
@@ -59,7 +66,7 @@ boot(app, __dirname, function(err) {
         // put logic here to detect whether the specified origin is allowed.
         return true;
     }
-/*	
+
 	wss.on('request', function(request) {
 		console.log( 'EVENT request' );
 		console.log( request );

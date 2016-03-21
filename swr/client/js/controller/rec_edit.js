@@ -47,6 +47,12 @@ function ($scope,Record, $state, $stateParams ) {
 		 
 	);
 
+	$scope.run = function(record){
+		console.log( "CALL $scope.run()"  );
+		console.log( "record.id = ", record.id  );
+		$state.go( 'rec_run', { id : record.id } );
+	};
+	
 	$scope.modify = function(record){
 		
 		$scope.record = record;
