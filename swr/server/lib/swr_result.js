@@ -4,17 +4,17 @@ var events 	= require('events');
 var util 	= require('util');
 var fs      = require("fs");
 
-module.exports = SwrLog;
-function SwrLog(record){
+module.exports = SwrResult;
+function SwrResult(record){
 	
 	this.record = record;
     events.EventEmitter.call(this); // call super class constructor
 	this.func = this.on;
 	this.event = this.on;
 	
-	console.log( 'Create SwrLog()' );
+	console.log( 'Create SwrResult()' );
 	
-	this.log_root = "/data/logs/";
+	this.log_root = "/data/results/";
 	this.log_ext  = ".log";
 	
 	this.func('open',   this.on_open.bind(this) );
@@ -23,15 +23,15 @@ function SwrLog(record){
 	this.func('stderr', this.on_write.bind(this) );
 	this.func('stdin',  this.on_stdin.bind(this) );
 	
-	 // 로그 디렉토리 체크 및 생성
+	 // 결과 디렉토리 체크 및 생성
 	try{ fs.accessSync(this.log_root); }catch(e){ fs.mkdirSync(this.log_root); }
 
 }
 
-util.inherits(SwrLog,events.EventEmitter);
+util.inherits(SwrResult,events.EventEmitter);
 
 //  전체 파일 이름을 얻는다. 
-SwrLog.prototype.getPath = function getPath(filename) {
+SwrResult.prototype.getPath = function getPath(filename) {
 	
     var full_filename = this.log_root 
 		             + filename 
@@ -41,10 +41,10 @@ SwrLog.prototype.getPath = function getPath(filename) {
 }
 
 //  로그를 연다. 
-SwrLog.prototype.on_open = function on_open(filename) {
+SwrResult.prototype.on_open = function on_open(filename) {
 	var self = this;
 	
-	console.log( 'CALL SwrLog.prototype.open()' );
+	console.log( 'CALL SwrResult.prototype.open()' );
 	
     var log_filename = this.getPath( filename );
 		
@@ -75,7 +75,7 @@ SwrLog.prototype.on_open = function on_open(filename) {
 }
 
 // 로그를 닫는다.
-SwrLog.prototype.on_close = function on_close() {
+SwrResult.prototype.on_close = function on_close() {
 
 	var self = this;
 	
@@ -102,9 +102,9 @@ SwrLog.prototype.on_close = function on_close() {
 }
 
 // 로그에 쓴다.
-SwrLog.prototype.on_write = function on_write( data ) {
+SwrResult.prototype.on_write = function on_write( data ) {
 
-//	console.log( 'CALL SwrLog.prototype.on_write()' );
+//	console.log( 'CALL SwrResult.prototype.on_write()' );
 //	console.log( data );
 	
 	var self = this;
@@ -151,7 +151,7 @@ SwrLog.prototype.on_write = function on_write( data ) {
 }
 
 // 로그에 쓴다.
-SwrLog.prototype.write_stdout_remaining = function write_stdout_remaining() {
+SwrResult.prototype.write_stdout_remaining = function write_stdout_remaining() {
 		
 	var self = this;
 	
@@ -182,7 +182,7 @@ SwrLog.prototype.write_stdout_remaining = function write_stdout_remaining() {
 }
 
 // 로그에 표준 입력을 쓴다. 
-SwrLog.prototype.on_stdin = function on_stdin( data ) {
+SwrResult.prototype.on_stdin = function on_stdin( data ) {
 
 	var self = this;
 	

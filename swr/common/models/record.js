@@ -1,17 +1,18 @@
-var os = require('os');
-var path = require('path');
-var fs = require("fs");
-var Client = require('ssh2').Client;
-var app = require('../../server/server');
-var SwrLog = require('../../server/lib/swr_log');
-var SwrSSH = require('../../server/lib/swr_ssh');
-var SwrRecording = require('../../server/lib/swr_recording');
+var os 				= require('os');
+var path 			= require('path');
+var fs 				= require("fs");
+var Client 			= require('ssh2').Client;
+var app 			= require('../../server/server');
+var SwrLog 			= require('../../server/lib/swr_log');
+var SwrRecording 	= require('../../server/lib/swr_recording');
+var SwrPlaying 	    = require('../../server/lib/swr_playing');
 
 var swr_convert = require('../../server/lib/swr_convert');
 
 module.exports = function(Record) {
 	
-	var swrRecoding = new SwrRecording();
+	var swrRecoding	= new SwrRecording();
+	var swrPlaying	= new SwrPlaying();
 	
     Record.createSSHRecord = function( data, cb) {
     	console.log( 'Call method : Record.createSSHRecord - data = ', data );
@@ -47,19 +48,6 @@ module.exports = function(Record) {
 		
 		swrRecoding.emit( "destroy" , data.id );
 		
-		// 쉘과 종료 처리를 한다 
-//		var id          = data.id;
-//		var SSHShell 	= RecordInstant[id].SSHShell;
-//		var record 		= RecordInstant[id].record;		
-//		var connection	= RecordInstant[id].connection;
-//		
-////		console.log(  record     );
-////		console.log(  SSHShell   );
-////		console.log(  connection );
-//		
-//		SSHShell.end(); 
-//		connection.close(); 
-		
 		var response = { ack : 'ok' };
 		cb(null, response);
 		
@@ -73,6 +61,55 @@ module.exports = function(Record) {
           returns: {arg: 'data', type: 'object' }
         }
     );
+	
+    Record.createSSHPlay = function( data, cb) {
+    	console.log( 'Call method : Record.createSSHPlay - data = ', data );
+		
+		Record.findById(data.id)
+		.then(function(record){
+			
+			swrPlaying.emit( "create" , record );
+			var response = { ack : 'ok' };
+			cb(null, response);
+
+		})
+		.catch(function(err){
+			console.log( 'err = ', err );
+			var response = { ack : 'fail' };
+			cb(null, response);
+			
+		})
+
+    };
+	
+    Record.remoteMethod(
+        'createSSHPlay',
+        {
+          http: {path: '/createSSHPlay', verb: 'post'},
+          accepts: {arg: 'data', type: 'object', http: { source: 'body' } },
+          returns: {arg: 'data', type: 'object' }
+        }
+    );
+
+    Record.destroySSHPlay = function( data, cb) {
+    	console.log( 'Call method : Record.destroySSHPlay - data = ', data );
+		
+		swrPlaying.emit( "destroy" , data.id );
+		
+		var response = { ack : 'ok' };
+		cb(null, response);
+		
+    };
+	
+    Record.remoteMethod(
+        'destroySSHPlay',
+        {
+          http: {path: '/destroySSHPlay', verb: 'post'},
+          accepts: {arg: 'data', type: 'object', http: { source: 'body' } },
+          returns: {arg: 'data', type: 'object' }
+        }
+    );
+	
 	
     Record.fileLogSSHRecord = function( data, cb) {
     	console.log( 'Call method : Record.fileLogSSHRecord - data = ', data );
@@ -89,15 +126,13 @@ module.exports = function(Record) {
 			} else {
 			    console.log( record );	
 				
-//				// 로그 파일 이름을 얻는다. 
-//				var log_filename = log_root 
-//								 + record.filename 
-//								 + log_ext;
-//		
-//				var log_obj = JSON.parse( fs.readFileSync( log_filename, 'utf8'));	
-//				
-//				var response = { ack : 'ok', content : log_obj };
-//				cb(null, response);
+				var log_filename = ( new SwrLog( record )).getPath( id );
+				console.log( 'log_filename = ', log_filename );
+				
+				var log_obj = JSON.parse( fs.readFileSync( log_filename, 'utf8'));	
+				
+				var response = { ack : 'ok', content : log_obj };
+				cb(null, response);
 			}
 
 		});
@@ -118,14 +153,15 @@ module.exports = function(Record) {
 		var id          = data.id;
 		console.log( 'id = ', id );
 		
-		// 로그 파일 이름을 얻는다. 
-//		var log_filename = log_root 
-//						 + 'prg_test.js' ;
-//		
-//		var log_file = fs.readFileSync( log_filename, 'utf8');	
-//				
-//		var response = { ack : 'ok', content : log_file };
-//		cb(null, response);
+		
+		// 실행 스크립트 파일 이름을 얻는다. 
+		var log_filename = '/data/runs/'
+						 + 'prg_test.js' ;
+		
+		var log_file = fs.readFileSync( log_filename, 'utf8');	
+				
+		var response = { ack : 'ok', content : log_file };
+		cb(null, response);
 		
     };
 	

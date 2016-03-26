@@ -4,7 +4,9 @@ var livedb = require('livedb');
 // var sharejs = require('share');
 
 var SR = require('../server/lib/swr_recording');
-var SwrRecording = new SR();
+var SP = require('../server/lib/swr_playing');
+var SwrRecording 	= new SR();
+var SwrPlaying 		= new SP();
 
 var app = module.exports = loopback();
 
@@ -56,6 +58,10 @@ boot(app, __dirname, function(err) {
     app.wss_router.attachServer(wss);
 	app.wss_router.mount('/sshrecord/recording/', 'ssh-record-protocol', function(request) {
 		SwrRecording.handlerWebSocket( request );
+	});
+	app.wss_router.mount('/sshrecord/playing/', 'ssh-record-protocol', function(request) {
+		console.log( 'CALL websocket connect /sshrecord/playing/' );
+		SwrPlaying.handlerWebSocket( request );
 	});
 	
 /*		
