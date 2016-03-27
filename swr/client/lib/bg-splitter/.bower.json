@@ -33,6 +33,5 @@
   },
   "_source": "git://github.com/blackgate/bg-splitter.git",
   "_target": "*",
-  "_originalSource": "bg-splitter",
-  "_direct": true
+  "_originalSource": "bg-splitter"
 }

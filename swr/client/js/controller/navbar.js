@@ -1,42 +1,46 @@
-(function(){
-'use strict';
-
-var mainApp = angular.module('mainApp'); 
-mainApp.controller('navbarCtrl', 
-[ 
-			  '$scope','authServices','$state',  'Test',
-	function ($scope, authServices, $state , Test ) {
-
- 	$scope.logout = function  () {
- 		authServices.logout();
- 	};
+define(
+[
+	'app',
+	'auth-services',
+],
+function (mainApp) { 
+	'use strict';
 	
- 	$scope.List = function  () {
-		console.log( 'call List in Nav' );
-		$state.go( 'rec_list' );
-	}
+	mainApp
+	.controller('navbarCtrl', 
+				[ '$scope','authServices','$state',  'Test',
+	function ($scope, authServices, $state , Test) { 
 	
- 	$scope.New = function  () {
-		console.log( 'call New in Nav' );
-		$state.go( 'rec_new' );
-	}
-
- 	$scope.Test = function  () {
+		$scope.logout = function  () {
+			authServices.logout();
+		};
 		
-		console.log( 'call api' );
-		Test.test( { name : 'yyc', doc : 'frog' } ).$promise.then(function ( value,responseHeaders) {
-			console.log( value );
-			var data = value.data;
+		$scope.List = function  () {
+			$state.go( 'rec_list' );
+		}
+		
+		$scope.New = function  () {
+			$state.go( 'rec_new' );
+		}
+	
+		$scope.Test = function  () {
 			
-            if (typeof data== 'object') {
-				  data = JSON.stringify(data, undefined, 2);
-				  console.log( data );
-            }
+//			console.log( 'call api' );
+//			Test.test( { name : 'yyc', doc : 'frog' } ).$promise.then(function ( value,responseHeaders) {
+//				console.log( value );
+//				var data = value.data;
+//				
+//				if (typeof data== 'object') {
+//					data = JSON.stringify(data, undefined, 2);
+//					console.log( data );
+//				}
+//	
+//			});
+			
+		};
+		
+	}]);
 
-		});
- 		
- 	};
+		
+});
 	
-}]);
-	
-})();
