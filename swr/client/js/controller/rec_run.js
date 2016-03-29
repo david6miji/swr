@@ -8,8 +8,10 @@
 define(
 [
 	'app',
+	'runner',
+	'termjs',
 ],
-function (mainApp) {
+function (mainApp,Runner) {
 	'use strict';
 	
 	mainApp.register
@@ -17,7 +19,7 @@ function (mainApp) {
 	[ '$scope', 'Record', '$state', '$stateParams',
 	function ($scope,Record, $state, $stateParams ) {
 		
-		console.log( 'CALL recRunCtrl' );
+		console.log( 'CALL recRunCtrl2' );
 		
 		$scope.alerts = [];
 		
@@ -35,6 +37,8 @@ function (mainApp) {
 		
 		var RUN = new Runner();
 		
+		console.log( "RUN = ", RUN );
+		
 		// 터미널을 준비한다. 	
 		var elem = document.getElementById('term'); 
 		var term = new Terminal({
@@ -47,24 +51,6 @@ function (mainApp) {
 		// 처리 ID 를 얻는다. 
 		var record_id = $stateParams.id;
 		console.log( 'record_id = ', record_id );
-		
-		// 처리 레코드 정보 획득 
-	//	$scope.record = Record.findOne( { filter: { where: { id: record_id } } },
-	//	    function(record) { 
-	//		    console.log( "CB Record.findOne() success"  );
-	//			console.log( 'record = ', record );
-	//			console.log( '$scope.record = ', $scope.record );
-	//			
-	//			CreateSSHPlay();
-	////			GetRunSSHScript( record ); // 실행 스크립트를 얻는다.
-	//			  
-	//		 },
-	//	    function(err) {
-	//		      console.log( "CB Record.findOne() fail"  );
-	//			  console.log( 'err = ', err );
-	//		 }
-	//
-	//	);
 		
 		// 레코드를 얻는다. 
 		Record.findOne( { filter: { where: { id: record_id } } }).$promise
@@ -129,16 +115,14 @@ function (mainApp) {
 			
 			ws.onmessage = function (event) {
 				term.write( event.data );
-				RUN.stdout( event.data );
+				RUN.emit( 'stdout', event.data );
 			};
 			
 		});
 			
 	
 		term.open(elem);
-		
-		term.write('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\r\n');
-		term.write('02        1         2         3         4         5         6         7         8         9         10        11        \r\n');
+		term.write( 'Play Start...\n');
 		
 		
 	}]);  

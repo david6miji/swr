@@ -20,9 +20,14 @@ requirejs.config({
 //		<script src="/lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 
 		'lbServices'		:	"/js/service/lb-services",
+		'event'				: 	"/js/event",
 		
 		'auth-services'		:	"/js/service/auth-services",
 		'navbar'			: 	"/js/controller/navbar",
+		
+		
+		'runner'			: 	"/js/runner",
+
 		
 	},
 
@@ -41,22 +46,3 @@ requirejs.config({
 	
 });
 
-// requirejs( [
-// 	'jquery',
-// 	'bootstrap',
-// 	'angular',
-// 	'angularAMD',
-// 	'ngResource',
-// 	'lbServices',
-// 	'app',
-// 	'navbar',
-// 	],
-// 
-// 	function ($,a,b,angular, angularAMD) {
-// 
-// 		$(document).ready(function () {
-// //			angularAMD.bootstrap(document, ['mainApp']);
-// 		});
-// 
-// 	}
-// );

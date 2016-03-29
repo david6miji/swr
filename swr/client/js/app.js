@@ -9,8 +9,6 @@ define(
     'angular-ui-router',
 	'ng-table',
 	
-//	'navbar',
-	
 //   'formly', 
 //   'formlyBootstrap',
 //   'ui.bootstrap',
