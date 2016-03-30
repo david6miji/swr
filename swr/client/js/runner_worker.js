@@ -16,16 +16,10 @@ onmessage = function(event){
 	eventFunc[task_data.cmd]( task_data.params );
 	RunTask();
 	
-// 워커를 호출한 곳으로 결과 메시지를 전송한다
-//	var sendData = receiveData + "OK~ I'm Worker"
-//	postMessage(sendData);
-//	count++;
-//	self.postMessage( "hellow2" );
-
 }
 
 var waitPromptTask = function( params ){
-	console.log( "CALL runner_worker - waitPromptTask() : params = ", params  );
+//	console.log( "CALL runner_worker - waitPromptTask() : params = ", params  );
 	
 	// 현재까지 받은 문자열안에 있는가?	
 	var index = remainingStr.indexOf( params.str );
@@ -40,8 +34,8 @@ var waitPromptTask = function( params ){
 	} 
 		
 	// 발견했다면 	
-	console.log( "Found index =============================== ", index );
-	console.log( "checkString : [" + params.str + "]" );
+//	console.log( "Found index =============================== ", index );
+//	console.log( "checkString : [" + params.str + "]" );
 	
 	// 검사 대상 문자열과 같은 위치까지 제거하고 다음번으로 넘긴다. 
 	var last  = index + params.str.length;
@@ -53,7 +47,11 @@ var waitPromptTask = function( params ){
 }
 
 var inputCommandTask = function( params ){
-	console.log( "CALL runner_worker - inputCommandTask() : params = ", params  );
+//	console.log( "CALL runner_worker - inputCommandTask() : params = ", params  );
+	
+	var sendData = { cmd : "input_command", params : params };
+	postMessage(sendData);
+
 	taskOne = null;
 	RunTask();
 }

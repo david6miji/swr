@@ -116,6 +116,13 @@ function (mainApp,Runner) {
 				RUN.emit( 'stdout', event.data );
 			};
 			
+			RUN.on("stdin", function(str) {
+//				console.log( '>>>>>>>>>>>> stdin [' + str + ']' );
+				if(ws.isConnection){
+					ws.send(str);
+				}
+			});
+			
 		});
 	
 		term.open(elem);

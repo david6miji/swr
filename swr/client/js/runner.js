@@ -28,6 +28,7 @@ function (EventEmitter) {
     	this.event = this.on;
 		
 		this.func('stdout',  this.fn_stdout.bind(this) );
+		this.on  ('stdin',	  this.on_stdin.bind(this) );
 		
 		if(!!window.Worker){
 			
@@ -37,7 +38,14 @@ function (EventEmitter) {
 						
 			//워커로부터 전달되는 메시지를 받는다
 			this.worker.onmessage = function(event){ 
-				console.log( "worker event = ", event.data );
+				
+				var req = event.data;
+				console.log( "worker request = ", req );
+				
+				if( req.cmd === 'input_command' ){
+					self.emit( 'stdin', req.params.str );
+				}
+				
 			};
 			this.worker.onerror = function(event){ 
 //				console.log( "worker error!!");
@@ -63,6 +71,13 @@ function (EventEmitter) {
 		
 //		console.log( 'STDOUT 에 대한 처리 [' + str + ']' );
 		this.worker.postMessage( { cmd : "stdout", params : str } );
+	
+	}
+	
+	Runner.prototype.on_stdin = function( str ){
+		
+		console.log( 'STDIN 에 대한 처리 [' + str + ']' );
+//		this.worker.postMessage( { cmd : "stdout", params : str } );
 	
 	}
 	
