@@ -1,6 +1,13 @@
 var window = this
 	, document = this.document;
 
+if(!!window.Worker){
+      console.log("이 브라우저는 웹 워커를 지원합니다")
+}
+else{
+      console.log("이 브라우저는 웹 워커를 지원하지 않습니다")
+}
+	
 define(
 [
 	'event',
@@ -8,9 +15,9 @@ define(
 function (EventEmitter) {
 
 	'use strict';
-	
+
+	var RunnerWorkerFilename = "/js/runner_worker.js";	
 	var Runner = function(options) {
-		console.log( 'Create Runner()');
 		var self = this;
 		
 		if (!(this instanceof Runner)) {
@@ -20,97 +27,55 @@ function (EventEmitter) {
     	this.func = this.on;
     	this.event = this.on;
 		
-		this.func('stdout',  this.on_stdout.bind(this) );
+		this.func('stdout',  this.fn_stdout.bind(this) );
 		
-		this.remainingStr 	= "";
-		this.checkString 	= "";
-		this.checkStrList 	= [];
+		if(!!window.Worker){
+			
+			// 워커가 이미 존재하면 종료하고 새로운 워커 생성
+			if(this.worker) this.worker.terminate();      
+			this.worker = new Worker(RunnerWorkerFilename);  	
+						
+			//워커로부터 전달되는 메시지를 받는다
+			this.worker.onmessage = function(event){ 
+				console.log( "worker event = ", event.data );
+			};
+			this.worker.onerror = function(event){ 
+//				console.log( "worker error!!");
+//				console.log( "worker error = ", event );
+//				console.log( "worker filename = ", event.filename );
+//				console.log( "worker lineno = "  , event.lineno   );
+//				console.log( "worker message = "  , event.message );
+			};
+
+			// 초기화 처리를 한다. 
+			this.worker.postMessage( { cmd : "init" } ); 
+		}
+		else{
+			alert("현재 브라우저는 웹 워커를 지원하지 않습니다")
+		}		
 		
-	//	setTimeout( this.Loop.bind(this), 10 );    
-	
 	}
 	
 	inherits(Runner, EventEmitter);
 	
-	Runner.prototype.Loop= function(){
-		
-		console.log( "CALL 타이머 이벤트 Loop" );
-	//	console.log( this );
-		
-	//	this.checkStdStr();
-		
-	//	setTimeout( this.Loop.bind(this), 10 ); 
-	}
 	
-	Runner.prototype.checkStdStr = function(){
-		console.log( "CALL Runner.prototype.checkStdStr()" );
-	//	console.log( this );
-	//	
-		console.log( "this.remainingStr(before) = ", this.remainingStr );
-	//	console.log( "this.checkString = ", this.checkString );
+	Runner.prototype.fn_stdout = function( str ){
 		
-		if( this.checkString === "" && this.checkStrList.length === 0 ){
-			this.remainingStr = "";
-			return;
-		}	
-		
-		if( this.checkString === "" ){
-			this.checkString = this.checkStrList.shift();
-		}
-		
-		if( this.checkString === "" ){
-			this.remainingStr = "";
-			return;
-		}
-	
-		// 현재까지 받은 문자열안에 있는가?	
-		var index = this.remainingStr.indexOf( this.checkString );
-		if( index < 0 ){
-			// 없다면 마지막 개행문자 이후만 남긴다. 
-			var index = this.remainingStr.lastIndexOf( '\n' );
-			if( index > -1 ){ 
-				this.remainingStr = this.remainingStr.substring(index+1);
-			}
-			console.log( "this.remainingStr(after-return) = ", this.remainingStr );
-			return;
-		} 
-		
-		// 발견했다면 	
-		console.log( "Found index =============================== ", index );
-	
-		// 검사 대상 문자열과 같은 위치까지 제거하고 다음번으로 넘긴다. 
-		var last  = index + this.checkString.length;
-		this.remainingStr = this.remainingStr.substring(last);
-		
-		// 검사 대상 문자열도 제거 
-		this.checkString = "";
-		
-		console.log( "this.remainingStr(after) = ", this.remainingStr );
-		// 재 호출 
-		this.checkStdStr();
-		
-	}
-	
-	Runner.prototype.on_stdout = function( str ){
-		
-		console.log( 'STDOUT 에 대한 처리 [' + str + ']' );
-		this.remainingStr += str;
-		
-		this.checkStdStr();
+//		console.log( 'STDOUT 에 대한 처리 [' + str + ']' );
+		this.worker.postMessage( { cmd : "stdout", params : str } );
 	
 	}
 	
-	/**
-	* Expose
-	*/
+	// Expose
 	
 	Runner.wait_prompt = function( str ){
 		console.log( '문자열을_기다림() 함수 호출 = ' , str );
-		this.checkStrList.push( str );
+		this.worker.postMessage( { cmd : "wait_prompt", params : str } );
 	}
 		
 	Runner.input_command = function( str ){
 		console.log( '명령을 입력함() 함수 호출 = ' , str );
+		this.worker.postMessage( { cmd : "input_command", params : str } ); 		
 	}
 	
 	return Runner;
